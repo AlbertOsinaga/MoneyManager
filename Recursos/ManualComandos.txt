@@ -1,0 +1,28 @@
+Comando: Entity Action [E-EntityRelated...] O-[JsonOpciones] [D-][JsonData]
+Respuesta: CodigoRespuesta [JsonData] ["ErrorDescrip"]
+
+Entity      Moneda
+            Cuenta...
+
+Action: A (Add)
+        D (Delete)
+        E (Exist)
+        U (Update)
+        I (Insert)
+        L (List)
+        G (Get)
+
+CodigoRespuesta:  0-199: Error
+                    200: OK
+                201-299: OK (con alguna codificación del resultado)
+
+Ejemplos:
+Comando:    Moneda Add {"Simbolo":"BS","Nombre":"Bolivianos","Tipo":"B","TasaCambio":6.85}
+Respuestas: 200 {"MonedaId":1,"Simbolo":"BS","Nombre":"Bolivianos","Tipo":"B","TasaCambio":6.85}
+            0 "Moneda 'BS' ya existe" 
+
+Comando:    Moneda Exist {"Simbolo":"BS"}
+Respuestas: 200 "YES"
+            200 "NO"
+            1 "Exception: Error en Servidor. Base de datos fuera de servicio!"
+            

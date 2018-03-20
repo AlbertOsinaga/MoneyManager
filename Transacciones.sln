@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBTransacciones", "DBTransa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolaTransacciones", "ConsolaTransacciones\ConsolaTransacciones.csproj", "{E137241F-639C-43B8-A88D-4210368CA27F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsModeloTransacciones", "TestsModeloTransacciones\TestsModeloTransacciones.csproj", "{325DB5C5-EB15-48EE-AA74-720E77239F54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xTestsModeloTransacciones", "TestsModeloTransacciones\xTestsModeloTransacciones.csproj", "{325DB5C5-EB15-48EE-AA74-720E77239F54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxService", "TxService\TxService.csproj", "{146586E2-E5FA-4B13-BCF2-053CCD2A8635}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsTxService", "TestsTxService\TestsTxService.csproj", "{F64DA7A5-B9D7-483B-A753-042FCA6006E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xTestsTxService", "TestsTxService\xTestsTxService.csproj", "{F64DA7A5-B9D7-483B-A753-042FCA6006E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

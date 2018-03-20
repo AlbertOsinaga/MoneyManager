@@ -7,6 +7,7 @@ namespace TxService
     public static class TxFuncion
     {
         public static int Ok = 200;
+        public static string RespuestaSep = "|"; 
 
         public static string Invoke(TransaccionesContext dbTx, string comando)
         {
@@ -43,8 +44,8 @@ namespace TxService
 
         public static string RespuestaToString((int Codigo, string Dato, string Error) respuesta)
         {
-            return (respuesta.Codigo.ToString() + " " +
-                    respuesta.Dato + " " +
+            return (respuesta.Codigo.ToString() + RespuestaSep +
+                    respuesta.Dato + RespuestaSep +
                    respuesta.Error);
         }
        
@@ -56,7 +57,7 @@ namespace TxService
 
             if (string.IsNullOrEmpty(respuesta))
                 return (codigo, dato, error);
-            string[] args = respuesta.Split(" ");
+            string[] args = respuesta.Split(RespuestaSep);
             int.TryParse(args[0], out codigo);
             if(codigo < 0)
             {

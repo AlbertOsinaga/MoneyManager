@@ -19,6 +19,8 @@ namespace TxService
             {
                 case "add":
                     return TxMoneda.Add(dbTx, jData);
+                case "del":
+                    return TxMoneda.Delete(dbTx, jData);
                 case "exi":
                     return TxMoneda.Exist(dbTx, jData);
                 default:
@@ -40,19 +42,18 @@ namespace TxService
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
 
-
-            if (string.IsNullOrEmpty(jData))
-            {
-                respuestaTuple.Error = "TxMoneda. Comando no tiene data: 'moneda exist (símbolo)'!";
-                return TxFuncion.RespuestaToString(respuestaTuple);
-            }
-
             try
             {
                 Moneda monedaIn = new Moneda(jData);
+                Moneda monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
+                if(monedaOut != null)
+                {
+                    respuestaTuple.Error = $"TxMoneda.Add. Moneda '{monedaIn.Simbolo}' ya existe'!";
+                    return TxFuncion.RespuestaToString(respuestaTuple);
+                }
                 dbTx.Add(monedaIn);
                 dbTx.SaveChanges();
-                Moneda monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
+                monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
                 if (monedaOut != null)
                 {
                     respuestaTuple.Codigo = 200;
@@ -73,6 +74,51 @@ namespace TxService
             }
         }
 
+        public static string Delete(TransaccionesContext dbTx, string jData)
+        {
+            (int Codigo, string Dato, string Error) respuestaTuple;
+            respuestaTuple.Codigo = 0;
+            respuestaTuple.Dato = string.Empty;
+            respuestaTuple.Error = string.Empty;
+
+            if (string.IsNullOrEmpty(jData))
+            {
+                respuestaTuple.Error = "TxMoneda. Comando no tiene data: 'moneda delete ({\"Simbolo\":\"simbolo\"})'!";
+                return TxFuncion.RespuestaToString(respuestaTuple);
+            }
+
+            try
+            {
+                Moneda monedaIn = new Moneda(jData);
+                Moneda monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
+                if (monedaOut == null)
+                {
+                    respuestaTuple.Error = $"TxMoneda.Delete. Moneda '{monedaIn.Simbolo}' no existe'!";
+                    return TxFuncion.RespuestaToString(respuestaTuple);
+                }
+                dbTx.Remove(monedaOut);
+                dbTx.SaveChanges();
+                monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
+                if (monedaOut == null)
+                {
+                    respuestaTuple.Codigo = 200;
+                    respuestaTuple.Dato = $"Moneda '{monedaIn.Simbolo}' borrada.";
+                }
+                else
+                {
+                    respuestaTuple.Codigo = 101;
+                    respuestaTuple.Dato = $"Moneda '{monedaIn.Simbolo}' no pudo ser borrada!";
+                }
+                return TxFuncion.RespuestaToString(respuestaTuple);
+            }
+            catch (System.Exception ex)
+            {
+                respuestaTuple.Codigo = 100;
+                respuestaTuple.Error = ex.Message + ("|" + ex.InnerException != null ? ex.InnerException.Message : string.Empty);
+                return TxFuncion.RespuestaToString(respuestaTuple);
+            }
+        }
+
         public static string Exist(TransaccionesContext dbTx, string jData)
         {
             (int Codigo, string Dato, string Error) respuestaTuple;
@@ -82,16 +128,16 @@ namespace TxService
 
             if ( string.IsNullOrEmpty(jData) )
             {
-                respuestaTuple.Error = "TxMoneda. Comando no tiene data: 'moneda exist (símbolo)'!";
+                respuestaTuple.Error = "TxMoneda. Comando no tiene data: 'moneda exist ({\"Simbolo\":\"simbolo\"})'!";
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
 
             try
             {
-                Moneda moneda = new Moneda(jData);
-                Moneda monedax = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == moneda.Simbolo);
+                Moneda monedaIn = new Moneda(jData);
+                Moneda monedaOut = dbTx.Monedas.SingleOrDefault(x => x.Simbolo == monedaIn.Simbolo);
                 respuestaTuple.Codigo = 200;
-                respuestaTuple.Dato = monedax != null ? "SI" : "NO";
+                respuestaTuple.Dato = monedaOut != null ? "SI" : "NO";
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
             catch (System.Exception ex)

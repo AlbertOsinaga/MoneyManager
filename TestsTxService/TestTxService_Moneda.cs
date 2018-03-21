@@ -14,6 +14,49 @@ namespace TestsTxService
             using (var dbTx = new TransaccionesContext())
             {
                 dbTx.Database.EnsureCreated();
+
+                // Moneda para Add
+                Moneda monedaAdd = new Moneda { Simbolo = "BSAdd" };
+                string jMonedaAdd = monedaAdd.ToStringExid();
+                try { TxFuncion.Invoke(dbTx, $"moneda delete {jMonedaAdd}"); } catch (Exception) { }
+
+                // Moneda para Del
+                Moneda monedaDel = new Moneda
+                {
+                    Simbolo = "BSDel",
+                    Nombre = "Bolivianos",
+                    Tipo = "B",
+                    TasaCambio = 1.00M
+                };
+                string jMonedaDel = monedaDel.ToStringExid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaDel}"); } catch (Exception) { }
+
+                // Moneda para Exist
+                Moneda monedaExi = new Moneda
+                {
+                    Simbolo = "BSExi",
+                    Nombre = "Bolivianos",
+                    Tipo = "B",
+                    TasaCambio = 1.00M
+                };
+                string jMonedaExi = monedaExi.ToStringExid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaExi}"); } catch (Exception) { }
+
+                // Moneda para Get
+                Moneda monedaGet = new Moneda { Simbolo = "BSGet" };
+                string jMonedaGet = monedaGet.ToStringExid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaGet}"); } catch (Exception) { }
+
+                // Moneda para Update
+                Moneda monedaUpd = new Moneda
+                {
+                    Simbolo = "BSUpd",
+                    Nombre = "Moneda Boliviana",
+                    Tipo = "X",
+                    TasaCambio = 6.9580M
+                };
+                string jMonedaUpd = monedaUpd.ToStringExid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaUpd}"); } catch (Exception) { }
             }
         }
 
@@ -21,19 +64,9 @@ namespace TestsTxService
         public void Test_Moneda_Add()
         {
             // Prepara
-            Moneda monedaDel = new Moneda
-            {
-                Simbolo = "BS"
-            };
-            string jMonedaDel = monedaDel.ToStringExid();
-            using(var dbTx = new TransaccionesContext())
-            {
-                try { TxFuncion.Invoke(dbTx, $"moneda delete {jMonedaDel}"); } catch (Exception) {}
-            }
-
             Moneda monedaIn = new Moneda
             {
-                Simbolo = "BS",
+                Simbolo = "BSAdd",
                 Nombre = "Bolivianos",
                 Tipo = "B",
                 TasaCambio = 1.00M
@@ -51,36 +84,20 @@ namespace TestsTxService
             string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
             Assert.True(partes.Length > 0);
             int.TryParse(partes[0], out int codigo);
-            Assert.Equal(200, codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
             Assert.True(partes.Length > 1);
             string jdata = partes[1];
             Moneda monedaOut = new Moneda(jdata);
             Assert.True(monedaOut != null);
             Assert.True(monedaOut.MonedaId > 0);
+            Assert.Equal("BSAdd", monedaOut.Simbolo);
         }
 
         [Fact]
         public void Test_Moneda_Delete()
         {
             // Prepara
-            Moneda monedaAdd = new Moneda
-            {
-                Simbolo = "BS",
-                Nombre = "Bolivianos",
-                Tipo = "B",
-                TasaCambio = 1.00M
-            };
-            string strMonedaAdd = monedaAdd.ToStringExid();
-            using (var dbTx = new TransaccionesContext())
-            {
-                try { TxFuncion.Invoke(dbTx, $"moneda add {monedaAdd}"); }
-                catch (Exception) { }
-            }
-
-            Moneda monedaIn = new Moneda
-            {
-                Simbolo = "BS",
-            };
+            Moneda monedaIn = new Moneda { Simbolo = "BSDel" };
             string jMonedaIn = monedaIn.ToStringExid();
 
             // Ejecuta
@@ -94,34 +111,17 @@ namespace TestsTxService
             string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
             Assert.True(partes.Length > 0);
             int.TryParse(partes[0], out int codigo);
-            Assert.Equal(200, codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
             Assert.True(partes.Length > 1);
             string data = partes[1];
-            Assert.Equal("Moneda 'BS' borrada.", data);
+            Assert.Equal("Moneda 'BSDel' borrada.", data);
         }
 
         [Fact]
         public void Test_Moneda_Exist()
         {
             // Prepara
-            Moneda monedaAdd = new Moneda
-            {
-                Simbolo = "BS",
-                Nombre = "Bolivianos",
-                Tipo = "B",
-                TasaCambio = 1.00M
-            };
-            string strMonedaAdd = monedaAdd.ToStringExid();
-            using (var dbTx = new TransaccionesContext())
-            {
-                try { TxFuncion.Invoke(dbTx, $"moneda add {monedaAdd}"); }
-                catch (Exception) {}
-            }
-
-            Moneda monedaIn = new Moneda
-            { 
-                Simbolo = "BS"
-            };
+            Moneda monedaIn = new Moneda { Simbolo = "BSExi" };
             string jMonedaIn = monedaIn.ToStringExid();
 
             // Ejecuta
@@ -135,10 +135,89 @@ namespace TestsTxService
             string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
             Assert.True(partes.Length > 0);
             int.TryParse(partes[0], out int codigo);
-            Assert.Equal(200, codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
             Assert.True(partes.Length > 1);
             string data = partes[1];
             Assert.Equal("SI", data);
+        }
+
+        [Fact]
+        public void Test_Moneda_Get()
+        {
+            // Prepara
+            Moneda monedaIn = new Moneda { Simbolo = "BSGet" };
+            string jMonedaIn = monedaIn.ToStringExid();
+
+            // Ejecuta
+            string respuesta = null;
+            using (TransaccionesContext dbTx = new TransaccionesContext())
+            {
+                respuesta = TxFuncion.Invoke(dbTx, $"moneda get {jMonedaIn}");
+            }
+
+            // Prueba
+            string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
+            Assert.True(partes.Length > 0);
+            int.TryParse(partes[0], out int codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
+            Assert.True(partes.Length > 1);
+            string data = partes[1];
+            Moneda monedaGet = new Moneda(data.ToString());
+            Assert.NotNull(monedaGet);
+
+            // Prepara
+            monedaIn = new Moneda { MonedaId = monedaGet.MonedaId };
+            jMonedaIn = monedaIn.ToString();
+
+            // ejecuta
+            using (TransaccionesContext dbTx = new TransaccionesContext())
+            {
+                respuesta = TxFuncion.Invoke(dbTx, $"moneda get {jMonedaIn}");
+            }
+
+            // Prueba
+            partes = respuesta.Split(TxFuncion.RespuestaSep);
+            Assert.True(partes.Length > 0);
+            int.TryParse(partes[0], out codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
+            Assert.True(partes.Length > 1);
+            data = partes[1];
+            Moneda monedaGetId = new Moneda(data);
+            Assert.NotNull(monedaGetId);
+            Assert.Equal(monedaGet.ToString(), monedaGetId.ToString());
+        }
+ 
+        [Fact]
+        public void Test_Moneda_Update()
+        {
+            // Prepara
+            Moneda monedaIn = new Moneda { Simbolo = "BSUpd" };
+            string jMonedaIn = monedaIn.ToStringExid();
+            string respuesta = null;
+            using (TransaccionesContext dbTx = new TransaccionesContext())
+            {
+                respuesta = TxFuncion.Invoke(dbTx, $"moneda get {jMonedaIn}");
+            }
+            string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
+            string jMonedaUpd = partes[1];
+            Moneda monedaUpd = new Moneda(jMonedaUpd);
+            monedaUpd.Nombre = "Dolares Americanos";
+            monedaUpd.TasaCambio = 2.3456M;
+
+            // Ejecuta
+            using (TransaccionesContext dbTx = new TransaccionesContext())
+            {
+                respuesta = TxFuncion.Invoke(dbTx, $"moneda update {jMonedaUpd}");
+            }
+
+            // Prueba
+            partes = respuesta.Split(TxFuncion.RespuestaSep);
+            Assert.True(partes.Length > 0);
+            int.TryParse(partes[0], out int codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
+            Assert.True(partes.Length > 1);
+            string jMonedaResp = partes[1];
+            Assert.Equal(jMonedaUpd, jMonedaResp);
         }
     }
 }

@@ -6,6 +6,9 @@ namespace TxService
 {
     public static class TxFuncion
     {
+        public static int Excepcion = 100;
+        public static int ServerError = 101;
+        public static int EntidadNoExiste = 102;
         public static int Ok = 200;
         public static string RespuestaSep = "|"; 
 
@@ -27,6 +30,8 @@ namespace TxService
                 respuestaTuple.Error = "TxFuncion.Comando debe tener entidad y acción!";
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
+            int indexToData = comando.IndexOf('{');
+            args[2] = comando.Substring(indexToData);
 
             //
             // Validación de Entidades

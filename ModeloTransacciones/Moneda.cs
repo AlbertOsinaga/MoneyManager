@@ -5,26 +5,64 @@ using Newtonsoft.Json;
 
 namespace ModeloTransacciones
 {
-    public partial class Moneda
+    public partial class Moneda : Entity
     {
         public int MonedaId { get; set; }
         public string Simbolo { get; set; }
         public string Nombre { get; set; }
-        public string Tipo { get; set; }   // B-Base X-Ext
+        public string Tipo { get; set; }            // B-Base X-Ext
         public decimal TasaCambio { get; set; }
 	}
 
     public partial class Moneda
     {
         public Moneda() {}
-        public Moneda(string monedaStr) : this()
+        public Moneda(string jmoneda) : this()
         {
-            FromString(monedaStr);
+            FromString(jmoneda);
         }
 
-        public void FromString(string monedaStr)
+        //
+        // Json
+        //
+
+        public override void FromJson(string jentity)
         {
-            Moneda moneda = JsonConvert.DeserializeObject<Moneda>(monedaStr);
+            FromString(jentity);
+        }
+
+        public override void ParseJson(string jentity)
+        {
+            ParseString(jentity);
+        }
+
+        public override string ToJson(string jfields = null)
+        {
+            return ToString(jfields);
+        }
+
+        public override string ToJsonNoid(string jfields = null)
+        {
+            return ToStringNoid(jfields);
+        }
+
+        public override string ToJsonX(string jfields = null)
+        {
+            return ToStringX(jfields);
+        }
+
+        public override string ToJsonXnoid(string jfields = null)
+        {
+            return ToStringXnoid(jfields);
+        }
+
+        //
+        // String
+        //
+
+        public void FromString(string jentity)
+        {
+            Moneda moneda = JsonConvert.DeserializeObject<Moneda>(jentity);
             this.MonedaId = moneda.MonedaId;
             this.Simbolo = moneda.Simbolo;
             this.Nombre = moneda.Nombre;
@@ -32,22 +70,47 @@ namespace ModeloTransacciones
             this.TasaCambio = moneda.TasaCambio;
         }
 
+        public void ParseString(string jentity)
+        {
+            dynamic dynMoneda = JsonConvert.DeserializeObject(jentity);
+            if (dynMoneda.MonedaId is object)
+                this.MonedaId = dynMoneda.MonedaId;
+            if (dynMoneda.Simbolo is object)
+                this.Simbolo = dynMoneda.Simbolo;
+            if (dynMoneda.Nombre is object)
+                this.Nombre = dynMoneda.Nombre;
+            if (dynMoneda.Tipo is object)
+                this.Tipo = dynMoneda.Tipo;
+            if (dynMoneda.TasaCambio is object)
+                this.TasaCambio = dynMoneda.TasaCambio;
+        }
+
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return ToString(null);
         }
 
-        public string ToStringExid()
-        {
-            return ToStringEx("'id'");
-        }
 
-        public string ToString(string fields)
+        public string ToString(string jfields, bool noid = false)
         {
-            StringReader sreader = new StringReader(fields);
+            if (jfields == null)
+            {
+                if(noid == false)
+                {
+                    return JsonConvert.SerializeObject(this);
+                }
+                else
+                {
+                    return ToStringX("[\"Id\"]");
+                }
+            }
+
+            StringReader sreader = new StringReader(jfields);
             JsonTextReader jreader = new JsonTextReader(sreader);
 
             dynamic dynMoneda = new ExpandoObject();
+            if(noid == false)
+                dynMoneda.MonedaId = MonedaId;
             while (jreader.Read())
             {
                 if (jreader.TokenType == JsonToken.String)
@@ -55,9 +118,10 @@ namespace ModeloTransacciones
                     string field = jreader.Value as String;
                     switch (field.Trim().ToLower())
                     {
-                        case "id":
-                        case "monedaid":
-                            dynMoneda.MonedaId = MonedaId;
+                        case "Id":
+                        case "MonedaId":
+                            if(noid == true)
+                                dynMoneda.MonedaId = MonedaId;
                             break;
                         case "simbolo":
                             dynMoneda.Simbolo = Simbolo;
@@ -79,13 +143,18 @@ namespace ModeloTransacciones
             return JsonConvert.SerializeObject(dynMoneda);
         }
 
-        public string ToStringEx(string fields)
+        public string ToStringNoid(string jfields)
+        {
+            return ToString(jfields, noid:true);
+        }
+
+        public string ToStringX(string fields, bool noid = false)
         {
             StringReader sreader = new StringReader(fields);
             JsonTextReader jreader = new JsonTextReader(sreader);
 
             dynamic fieldsMoneda = new ExpandoObject();
-            fieldsMoneda.MonedaId = true;
+            fieldsMoneda.MonedaId = !noid;
             fieldsMoneda.Simbolo = true;
             fieldsMoneda.Nombre = true;
             fieldsMoneda.Tipo = true;
@@ -132,6 +201,11 @@ namespace ModeloTransacciones
                 dynMoneda.TasaCambio = TasaCambio;
             
             return JsonConvert.SerializeObject(dynMoneda);
+        }
+
+        public string ToStringXnoid(string jfields)
+        {
+            return ToStringX(jfields, noid:true);
         }
     }
 }

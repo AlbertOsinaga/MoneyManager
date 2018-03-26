@@ -1,10 +1,9 @@
 using Xunit;
-using Newtonsoft.Json;
 using ModeloTransacciones;
 
 namespace TestsModeloTransacciones
 {
-    public class TestMoneda_ToString
+    public class TestMoneda_ToJson
     {
         [Fact]
         public void Test1()
@@ -20,7 +19,7 @@ namespace TestsModeloTransacciones
             };
 
             // Ejecuta
-            string jMoneda = moneda.ToString();
+            string jMoneda = moneda.ToJson();
 
             // Preparar 
             Assert.Equal("{\"MonedaId\":1,\"Simbolo\":\"BS\",\"Nombre\":\"Bolivianos\",\"Tipo\":\"B\",\"TasaCambio\":1.00}", jMoneda);
@@ -40,7 +39,7 @@ namespace TestsModeloTransacciones
             };
 
             // Ejecuta
-            string jMoneda = moneda.ToStringExid();
+            string jMoneda = moneda.ToJsonNoid();
 
             // Preparar 
             Assert.Equal("{\"Simbolo\":\"$US\",\"Nombre\":\"Dólares Americanos\",\"Tipo\":\"X\",\"TasaCambio\":6.8519}", jMoneda);
@@ -60,7 +59,7 @@ namespace TestsModeloTransacciones
             };
 
             // Ejecuta
-            string jMoneda = moneda.ToString("[\"Id\",\"Simbolo\",\"Nombre\",\"Tipo\"]");
+            string jMoneda = moneda.ToJson("[\"Id\",\"Simbolo\",\"Nombre\",\"Tipo\"]");
 
             // Preparar 
             Assert.Equal("{\"MonedaId\":1,\"Simbolo\":\"BS\",\"Nombre\":\"Bolivianos\",\"Tipo\":\"B\"}", jMoneda);
@@ -80,7 +79,7 @@ namespace TestsModeloTransacciones
             };
 
             // Ejecuta
-            string jMoneda = moneda.ToString("[\"Simbolo\",\"TasaCambio\",\"Tipo\"]");
+            string jMoneda = moneda.ToJsonNoid("[\"Simbolo\",\"TasaCambio\",\"Tipo\"]");
 
             // Preparar 
             Assert.Equal("{\"Simbolo\":\"BS\",\"TasaCambio\":1.00,\"Tipo\":\"B\"}", jMoneda);
@@ -100,7 +99,7 @@ namespace TestsModeloTransacciones
             };
 
             // Ejecuta
-            string jMoneda = moneda.ToStringEx("[\"Id\",\"TasaCambio\"]");
+            string jMoneda = moneda.ToJsonX("[\"Id\",\"TasaCambio\"]");
 
             // Preparar 
             Assert.Equal("{\"Simbolo\":\"BS\",\"Nombre\":\"Bolivianos\",\"Tipo\":\"B\"}", jMoneda);

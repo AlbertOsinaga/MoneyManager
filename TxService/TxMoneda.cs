@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Newtonsoft.Json;
 using DBTransacciones;
 using ModeloTransacciones;
 
@@ -19,6 +20,8 @@ namespace TxService
             {
                 case "add":
                     return TxMoneda.Add(dbTx, jData);
+                case "all":
+                    return TxMoneda.All(dbTx);
                 case "delete":
                     return TxMoneda.Delete(dbTx, jData);
                 case "exist":
@@ -76,6 +79,18 @@ namespace TxService
                 respuestaTuple.Error = ex.Message + ("|" + ex.InnerException != null ? ex.InnerException.Message : string.Empty);
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
+        }
+
+        public static string All(TransaccionesContext dbTx)
+        {
+            (int Codigo, string Dato, string Error) respuestaTuple;
+            respuestaTuple.Codigo = 0;
+            respuestaTuple.Dato = string.Empty;
+            respuestaTuple.Error = string.Empty;
+
+            var monedas = dbTx.Monedas.ToArray();
+            string jmonedas = Entity.ToJson(monedas);
+            return jmonedas;
         }
 
         public static string Delete(TransaccionesContext dbTx, string jData)

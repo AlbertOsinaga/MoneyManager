@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using Newtonsoft.Json;
@@ -54,6 +55,19 @@ namespace ModeloTransacciones
         public override string ToJsonXnoid(string jfields = null)
         {
             return ToStringXnoid(jfields);
+        }
+
+        public static Moneda[] FromJsonArray(string jentities)
+        {
+            string[] strEntities = Entity.JsonToArray(jentities);
+            List<Moneda> monedas = new List<Moneda>();
+            foreach (var se in strEntities)
+            {
+                Moneda moneda = new Moneda(se);
+                monedas.Add(moneda);
+            }
+
+            return monedas.ToArray();
         }
 
         //
@@ -148,9 +162,21 @@ namespace ModeloTransacciones
             return ToString(jfields, noid:true);
         }
 
-        public string ToStringX(string fields, bool noid = false)
+        public string ToStringX(string jfields, bool noid = false)
         {
-            StringReader sreader = new StringReader(fields);
+            if (jfields == null)
+            {
+                if (noid == false)
+                {
+                    return JsonConvert.SerializeObject(this);
+                }
+                else
+                {
+                    return ToStringX("[\"Id\"]");
+                }
+            }
+
+            StringReader sreader = new StringReader(jfields);
             JsonTextReader jreader = new JsonTextReader(sreader);
 
             dynamic fieldsMoneda = new ExpandoObject();

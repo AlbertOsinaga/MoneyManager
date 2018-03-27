@@ -88,9 +88,20 @@ namespace TxService
             respuestaTuple.Dato = string.Empty;
             respuestaTuple.Error = string.Empty;
 
-            var monedas = dbTx.Monedas.ToArray();
-            string jmonedas = Entity.ToJson(monedas);
-            return jmonedas;
+            try
+            {
+                var monedas = dbTx.Monedas.ToArray();
+                string jmonedas = Entity.ToJson(monedas);
+                respuestaTuple.Codigo = TxFuncion.Ok;
+                respuestaTuple.Dato = jmonedas;
+                return TxFuncion.RespuestaToString(respuestaTuple);
+            }
+            catch (System.Exception ex)
+            {
+                respuestaTuple.Codigo = TxFuncion.Excepcion;
+                respuestaTuple.Error = ex.Message + ("|" + ex.InnerException != null ? ex.InnerException.Message : string.Empty);
+                return TxFuncion.RespuestaToString(respuestaTuple);
+            }
         }
 
         public static string Delete(TransaccionesContext dbTx, string jData)

@@ -30,8 +30,12 @@ namespace TxService
                 respuestaTuple.Error = "TxFuncion.Comando debe tener entidad y acción!";
                 return TxFuncion.RespuestaToString(respuestaTuple);
             }
-            int indexToData = comando.IndexOf('{');
-            args[2] = comando.Substring(indexToData);
+            if (args.Length >= 3)
+            {
+                int indexToData = comando.IndexOf('{');
+                if(indexToData >= 0)
+                    args[2] = comando.Substring(indexToData);
+            }
 
             //
             // Validación de Entidades

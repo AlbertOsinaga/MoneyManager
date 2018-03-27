@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using Xunit;
 using DBTransacciones;
 using ModeloTransacciones;
@@ -17,7 +18,7 @@ namespace TestsTxService
 
                 // Moneda para Add
                 Moneda monedaAdd = new Moneda { Simbolo = "BSAdd" };
-                string jMonedaAdd = monedaAdd.ToStringExid();
+                string jMonedaAdd = monedaAdd.ToJsonNoid();
                 try { TxFuncion.Invoke(dbTx, $"moneda delete {jMonedaAdd}"); } catch (Exception) { }
 
                 // Moneda para Del
@@ -28,7 +29,7 @@ namespace TestsTxService
                     Tipo = "B",
                     TasaCambio = 1.00M
                 };
-                string jMonedaDel = monedaDel.ToStringExid();
+                string jMonedaDel = monedaDel.ToJsonNoid();
                 try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaDel}"); } catch (Exception) { }
 
                 // Moneda para Exist
@@ -39,12 +40,12 @@ namespace TestsTxService
                     Tipo = "B",
                     TasaCambio = 1.00M
                 };
-                string jMonedaExi = monedaExi.ToStringExid();
+                string jMonedaExi = monedaExi.ToJsonNoid();
                 try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaExi}"); } catch (Exception) { }
 
                 // Moneda para Get
                 Moneda monedaGet = new Moneda { Simbolo = "BSGet" };
-                string jMonedaGet = monedaGet.ToStringExid();
+                string jMonedaGet = monedaGet.ToJsonNoid();
                 try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaGet}"); } catch (Exception) { }
 
                 // Moneda para Update
@@ -55,8 +56,37 @@ namespace TestsTxService
                     Tipo = "X",
                     TasaCambio = 6.9580M
                 };
-                string jMonedaUpd = monedaUpd.ToStringExid();
+                string jMonedaUpd = monedaUpd.ToJsonNoid();
                 try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaUpd}"); } catch (Exception) { }
+
+                // Moneda para All
+                Moneda monedaAll = new Moneda
+                {
+                    Simbolo = "BSAll1",
+                    Nombre = "Moneda Alienigena",
+                    Tipo = "X",
+                    TasaCambio = 6.9580M
+                };
+                string jMonedaAll = monedaAll.ToJsonNoid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaAll}"); } catch (Exception) { }
+                monedaAll = new Moneda
+                {
+                    Simbolo = "BSAll2",
+                    Nombre = "Moneda Alienigena",
+                    Tipo = "X",
+                    TasaCambio = 6.9580M
+                };
+                jMonedaAll = monedaAll.ToJsonNoid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaAll}"); } catch (Exception) { }
+                monedaAll = new Moneda
+                {
+                    Simbolo = "BSAll3",
+                    Nombre = "Moneda Alienigena",
+                    Tipo = "X",
+                    TasaCambio = 6.9580M
+                };
+                jMonedaAll = monedaAll.ToJsonNoid();
+                try { TxFuncion.Invoke(dbTx, $"moneda add {jMonedaAll}"); } catch (Exception) { }
             }
         }
 
@@ -71,7 +101,7 @@ namespace TestsTxService
                 Tipo = "B",
                 TasaCambio = 1.00M
             };
-            string jMonedaIn = monedaIn.ToStringExid();
+            string jMonedaIn = monedaIn.ToJsonNoid();
 
             // Ejecuta
             string respuesta = null;
@@ -94,11 +124,33 @@ namespace TestsTxService
         }
 
         [Fact]
+        public void Test_Moneda_All()
+        {
+            // Ejecuta
+            string respuesta = null;
+            using (TransaccionesContext dbTx = new TransaccionesContext())
+            {
+                respuesta = TxFuncion.Invoke(dbTx, $"moneda all");
+            }
+
+            // Prueba
+            string[] partes = respuesta.Split(TxFuncion.RespuestaSep);
+            Assert.True(partes.Length > 0);
+            int.TryParse(partes[0], out int codigo);
+            Assert.Equal(TxFuncion.Ok, codigo);
+            Assert.True(partes.Length > 1);
+            string data = partes[1];
+            Moneda[] monedas = Moneda.FromJsonArray(data);
+            Assert.NotNull(monedas);
+            Assert.True(monedas.Length >= 3);
+        }
+ 
+        [Fact]
         public void Test_Moneda_Delete()
         {
             // Prepara
             Moneda monedaIn = new Moneda { Simbolo = "BSDel" };
-            string jMonedaIn = monedaIn.ToStringExid();
+            string jMonedaIn = monedaIn.ToJsonNoid();
 
             // Ejecuta
             string respuesta = null;
@@ -122,7 +174,7 @@ namespace TestsTxService
         {
             // Prepara
             Moneda monedaIn = new Moneda { Simbolo = "BSExi" };
-            string jMonedaIn = monedaIn.ToStringExid();
+            string jMonedaIn = monedaIn.ToJsonNoid();
 
             // Ejecuta
             string respuesta = null;
@@ -146,7 +198,7 @@ namespace TestsTxService
         {
             // Prepara
             Moneda monedaIn = new Moneda { Simbolo = "BSGet" };
-            string jMonedaIn = monedaIn.ToStringExid();
+            string jMonedaIn = monedaIn.ToJsonNoid();
 
             // Ejecuta
             string respuesta = null;
@@ -192,7 +244,7 @@ namespace TestsTxService
         {
             // Prepara
             Moneda monedaIn = new Moneda { Simbolo = "BSUpd" };
-            string jMonedaIn = monedaIn.ToStringExid();
+            string jMonedaIn = monedaIn.ToJsonNoid();
             string respuesta = null;
             using (TransaccionesContext dbTx = new TransaccionesContext())
             {

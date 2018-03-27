@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -13,6 +14,36 @@ namespace ModeloTransacciones
         public abstract string ToJsonNoid(string jfields = null);   // No Id , Include fields (null van todos No Id) 
         public abstract string ToJsonX(string jfields = null);      // Con Id , Exclude fields (null van todos con Id)
         public abstract string ToJsonXnoid(string jfields = null);  // No Id , Exclude fields (null van todos No Id)
+
+        public static string[] JsonToArray(string jentities)
+        {
+            List<string> strEntities = new List<string>();
+            StringReader sr = new StringReader(jentities);
+            JsonTextReader jReader = new JsonTextReader(sr);
+            string jentity = string.Empty;
+            int indexStart = -1;
+            int indexEnd = -1;
+            while(jReader.Read())
+            {
+                if(jReader.TokenType == JsonToken.StartObject)
+                {
+                    indexStart = jReader.LinePosition - 1;
+                }
+                else if (jReader.TokenType == JsonToken.EndObject)
+                {
+                    indexEnd = jReader.LinePosition;
+                    jentity = jentities.Substring(indexStart, indexEnd - indexStart);
+                    strEntities.Add(jentity);
+                    indexStart = -1;
+                    indexEnd = -1;
+                    jentity = string.Empty;
+                }
+            }
+            jReader.Close();
+            sr.Close();
+
+            return strEntities.ToArray();
+        }
 
         public static string ToJson(Entity[] entidades, string jfields = null, string sufijo = null)
         {

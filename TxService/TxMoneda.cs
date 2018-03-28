@@ -216,7 +216,7 @@ namespace TxService
                 }
                 else
                 {
-                    respuestaTuple.Codigo = TxFuncion.EntidadNoExiste;
+                    respuestaTuple.Codigo = TxFuncion.Ok;
                     respuestaTuple.Dato = string.Empty;
                 }
                 return TxFuncion.RespuestaToString(respuestaTuple);

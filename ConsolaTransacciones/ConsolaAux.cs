@@ -13,11 +13,11 @@ namespace ConsolaTransacciones
             Console.WriteLine("-----------------------------------------------------------------------");
 
             // Instrucciones
-            // Funcion (A-Adicionar B-Buscar D-DesplegarLista M-Modificar X-Eliminar)
+            // Funcion (N-Nueva B-Buscar D-DesplegarLista M-Modificar X-Eliminar)
             Console.WriteLine("Ingrese comando: 'Entidad' 'Funcion'");
             Console.WriteLine("Entidades: Moneda");
-            Console.WriteLine("Funciones: A-Adicionar B-Buscar D-DesplegarLista M-Modificar X-Eliminar");
-            Console.WriteLine("Ejemplo: Moneda A (para adicionar una moneda)");
+            Console.WriteLine("Funciones: D-Desplegar L-Listar M-Modificar N-Nueva X-Eliminar");
+            Console.WriteLine("Ejemplo: Moneda N (para adicionar una moneda nueva)");
             Console.WriteLine("'F': Para salir");
             Console.WriteLine("-----------------------------------------------------------------------");
 
@@ -34,7 +34,7 @@ namespace ConsolaTransacciones
             }
 
             // Cierre
-            Console.WriteLine("Gracias por utilizar Transacciones!");
+            Console.WriteLine("Gracias por utilizar Money Manager - Transacciones!");
         }
 
         private static string RecogeComando()
@@ -50,8 +50,14 @@ namespace ConsolaTransacciones
             string[] argsComando = comando.Split(' ');
             if (argsComando.Length >= 2 && argsComando[0].Length >= 3)
             {
-                if (argsComando[0].Substring(0, 3).Trim().ToUpper() == "MON")
+                string entidad = argsComando[0]; 
+                if (entidad.Substring(0, 3).Trim().ToUpper() == "MON")
                     MonedaAux.TrabajarCon(dbTx, argsComando);
+                else
+                {
+                    Console.WriteLine($"Entidad '{entidad}' desconocida!");
+                    return;
+                }
             }
         }
     }

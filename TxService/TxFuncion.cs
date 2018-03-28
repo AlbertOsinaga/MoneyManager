@@ -51,6 +51,12 @@ namespace TxService
             }
         }
 
+        public static (int, string, string) Invoque(TransaccionesContext dbTx, string comando)
+        {
+            string respuesta = Invoke(dbTx, comando);
+            return RespuestaToTuple(respuesta);
+        }
+
         public static string RespuestaToString((int Codigo, string Dato, string Error) respuesta)
         {
             return (respuesta.Codigo.ToString() + RespuestaSep +

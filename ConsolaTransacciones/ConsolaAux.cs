@@ -9,12 +9,17 @@ namespace ConsolaTransacciones
         {
             // Inicio
             Console.WriteLine();
-            Console.WriteLine("Bienvenido a Transacciones!");
-            Console.WriteLine();
+            Console.WriteLine("Bienvenido a MoneyManager-Transacciones!");
+            Console.WriteLine("-----------------------------------------------------------------------");
 
             // Instrucciones
-            // Funcion (L-Lista D-Desplegar A-Adicionar M-Modificar E-Eliminar)
-            Console.WriteLine("Ingrese comando (Entidad Funcion)");
+            // Funcion (A-Adicionar B-Buscar D-DesplegarLista M-Modificar X-Eliminar)
+            Console.WriteLine("Ingrese comando: 'Entidad' 'Funcion'");
+            Console.WriteLine("Entidades: Moneda");
+            Console.WriteLine("Funciones: A-Adicionar B-Buscar D-DesplegarLista M-Modificar X-Eliminar");
+            Console.WriteLine("Ejemplo: Moneda A (para adicionar una moneda)");
+            Console.WriteLine("'F': Para salir");
+            Console.WriteLine("-----------------------------------------------------------------------");
 
             // Loop de proceso
             while (true)
